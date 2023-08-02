@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import fetch from 'node-fetch';
 
 import { Bot, Context } from "grammy";
-import { Message } from "grammy/types";
+import { InputFile, Message } from "grammy/types";
 
 dotenv.config();
 
@@ -88,7 +88,7 @@ const handleError = (error: unknown, ctx: Context) => {
     }
 }
 
-bot.command(['start', 'help'], (ctx) => {
+bot.command(['start', 'help'], async (ctx) => {
     const help = [
         '<b>Welcome to CoC Helper Bot</b>',
         'You can use the following commands\n',
@@ -98,6 +98,7 @@ bot.command(['start', 'help'], (ctx) => {
         '/verify #playerTag apiToken'
     ].join('\n');
 
+    await ctx.replyWithVideo('BAACAgIAAxkBAAPvZMrHoFvK223F0uVmCJm0P1Q7V6IAAg8yAAL2e1FKaZZCAfErnfgvBA');
     ctx.reply(help, { parse_mode: 'HTML' });
 });
 
