@@ -1,0 +1,1 @@
+# CoC Helper Bot
