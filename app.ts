@@ -54,7 +54,7 @@ const tryGetStats = async ({ text, entities }: Message) => {
         .join('\n');
 };
 
-const tryVerifyOwnership = async ({ text, entities }: Message) => {
+const tryVerifyOwnership = async ({ text }: Message) => {
     const [, tag, code] = text?.match(/\/\w+ (#\w+) (\w+)?/) ?? [];
 
     if (!tag || !code) {
@@ -80,13 +80,26 @@ const tryVerifyOwnership = async ({ text, entities }: Message) => {
     }
 };
 
-const handleError = (error: Error, ctx: Context) => {
+const handleError = (error: unknown, ctx: Context) => {
     if (error instanceof InternalError) {
         ctx.reply(`❌ ${error.message}`);
     } else {
         ctx.reply('❌ Something went wrong. Please try again later');
     }
 }
+
+bot.command(['start', 'help'], (ctx) => {
+    const help = [
+        '<b>Welcome to CoC Helper Bot</b>',
+        'You can use the following commands\n',
+        '/stats - Shows a brief stats for a player',
+        '/stats #playerTag\n',
+        '/verify - Verifies account ownership',
+        '/verify #playerTag apiToken'
+    ].join('\n');
+
+    ctx.reply(help, { parse_mode: 'HTML' });
+});
 
 bot.command('stats', async (ctx) => {
     if (!ctx.message) {
@@ -96,7 +109,7 @@ bot.command('stats', async (ctx) => {
     try {
         const stats = await tryGetStats(ctx.message);
 
-        ctx.replyWithSticker('CAACAgEAAxkBAANOZMqb1NYuIzcycWhj8XHUX6dj77AAAlAAA8GZigABNpX804CbHk0vBA');
+        await ctx.replyWithSticker('CAACAgEAAxkBAANOZMqb1NYuIzcycWhj8XHUX6dj77AAAlAAA8GZigABNpX804CbHk0vBA');
         ctx.reply(stats, { parse_mode: 'HTML' });
     } catch (error) {
         handleError(error, ctx);
@@ -121,3 +134,6 @@ bot.command('verify', async (ctx) => {
 });
 
 bot.start();
+bot.api.setMyCommands([
+    { command: 'help', description: 'Show basic intro' }
+]);
